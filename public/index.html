@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SorawichToday Short Link</title>
+
+    <!-- Dynamic OpenGraph Tags Container (Updated via JS for links) -->
+    <meta id="og-title" property="og:title" content="AdLink Pro - ระบบย่อลิงก์สร้างรายได้">
+    <meta id="og-desc" property="og:description" content="ย่อลิงก์ ปลอดภัย ได้เงินจริง พร้อมระบบโฆษณาคั่นกลาง 5 วินาที">
+    <meta id="og-image" property="og:image" content="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800">
+    <meta id="og-type" property="og:type" content="website">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans Thai Looped', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(234, 88, 12, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(234, 88, 12, 0.8); }
+        }
+        .glow-btn {
+            animation: pulse-glow 2s infinite;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased selection:bg-brand-500 selection:text-white bg-slate-900 text-slate-100">
+
+    <!-- Top Navigation Bar -->
+    <header id="main-header" class="bg-slate-800/90 backdrop-blur-md border-b border-slate-700/60 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('/')">
+                    <div class="bg-gradient-to-tr from-brand-600 to-amber-400 p-2.5 rounded-xl shadow-lg shadow-brand-500/20">
+                        <i class="fa-solid fa-bolt text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold bg-gradient-to-r from-brand-500 to-amber-300 bg-clip-text text-transparent">AdLink</span>
+                        <span class="text-xs bg-slate-700 text-amber-400 px-2 py-0.5 rounded-full ml-1 font-medium border border-amber-500/20">Firebase Pro</span>
+                    </div>
+                </div>
+
+                <!-- Nav Menu -->
+                <nav class="hidden md:flex items-center space-x-2">
+                    <button onclick="navigateTo('/')" class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-700/50 text-slate-200 transition">
+                        <i class="fa-solid fa-gauge mr-1.5 text-brand-500"></i> แดชบอร์ด
+                    </button>
+                    <button id="nav-admin-btn" onclick="openAdminModal()" class="hidden px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-700/50 text-amber-400 transition">
+                        <i class="fa-solid fa-sliders mr-1.5 text-amber-400"></i> จัดการโฆษณา (Admin)
+                    </button>
+                </nav>
+
+                <!-- User Balance & Auth Badge -->
+                <div class="flex items-center space-x-3">
+                    <div class="hidden sm:flex flex-col text-right">
+                        <span class="text-[11px] text-slate-400">ยอดเงินสะสมของคุณ</span>
+                        <span id="user-balance-nav" class="text-sm font-bold text-emerald-400">$0.0000</span>
+                    </div>
+
+                    <!-- User Account / Auth Dropdown or Button -->
+                    <div id="auth-actions-container" class="flex items-center space-x-2">
+                        <!-- Guest Mode / Logged Out View -->
+                        <div id="auth-logged-out" class="flex items-center space-x-2">
+                            <button onclick="openAuthModal('login')" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-lg transition border border-slate-600">
+                                <i class="fa-solid fa-right-to-bracket mr-1 text-amber-400"></i> เข้าสู่ระบบ
+                            </button>
+                        <!--    <button onclick="openAuthModal('register')" class="px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold rounded-lg shadow-md shadow-brand-500/20 transition">
+                                <i class="fa-solid fa-user-plus mr-1"></i> สมัครสมาชิก
+                            </button> -->
+                        </div>
+
+                        <!-- Logged In View -->
+                        <div id="auth-logged-in" class="hidden flex items-center space-x-2">
+                            <div class="px-3 py-1 bg-slate-700/80 border border-slate-600 rounded-full text-xs font-medium text-slate-200 flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                <span id="user-display-name">User</span>
+                            </div>
+                            <button onclick="handleLogout()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-red-500/20 hover:text-red-400 text-slate-400 text-xs rounded-lg border border-slate-700 transition" title="ออกจากระบบ">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        <!-- VIEW 1: DASHBOARD -->
+        <div id="view-dashboard" class="space-y-8">
+            <!-- Hero / Shortener Box -->
+            <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="max-w-3xl mx-auto text-center space-y-4">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                        ย่อลิงก์ สร้างรายได้ <span class="bg-gradient-to-r from-brand-500 to-amber-400 bg-clip-text text-transparent">พร้อมโฆษณา</span>
+                    </h1>
+                    <p class="text-slate-400 text-sm sm:text-base">
+                        แปลงลิงก์ยาวของคุณให้เป็นลิงก์สั้น รับรายได้จากการเข้าชมพร้อมหน้านับถอยหลัง 5 วินาที
+                    </p>
+
+                    <!-- Shorten Form Container -->
+                    <div id="shorten-form-container">
+                        <form onsubmit="handleShortenSubmit(event)" class="pt-4 space-y-4">
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <div class="relative flex-1">
+                                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500">
+                                        <i class="fa-solid fa-link text-sm"></i>
+                                    </span>
+                                    <input type="url" id="target-url" required placeholder="วาง URL ที่ต้องการย่อ เช่น https://example.com/article" 
+                                        class="w-full pl-11 pr-4 py-3.5 bg-slate-950/80 border border-slate-700 rounded-2xl text-white placeholder-slate-500 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none transition">
+                                </div>
+                                <button type="submit" class="px-6 py-3.5 bg-gradient-to-r from-brand-500 to-amber-500 hover:from-brand-600 hover:to-amber-600 text-white font-semibold rounded-2xl shadow-lg shadow-brand-500/25 transition active:scale-95 shrink-0 flex items-center justify-center space-x-2">
+                                    <i id="btn-shorten-icon" class="fa-solid fa-scissors"></i>
+                                    <span id="btn-shorten-text">ย่อลิงก์เลย</span>
+                                </button>
+                            </div>
+
+                            <!-- Custom Slug Input Option -->
+                            <div class="flex items-center space-x-2 justify-center text-xs text-slate-400">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+                                <span>ตั้งชื่อลิงก์ย่อเอง (Custom Slug):</span>
+                                <input type="text" id="custom-slug" placeholder="my-custom-link" 
+                                    class="px-3 py-1 bg-slate-950 border border-slate-700 rounded-lg text-white font-mono text-xs focus:border-brand-500 focus:outline-none w-36">
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Shorten Result Box (Shown after link creation) -->
+                    <div id="shorten-result-box" class="hidden pt-4 space-y-4">
+                        <div class="bg-slate-950/90 border border-emerald-500/40 rounded-2xl p-4 sm:p-5 text-left space-y-3 shadow-2xl">
+                            <div class="flex items-center justify-between text-xs text-emerald-400 font-semibold">
+                                <span class="flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-circle-check text-sm"></i>
+                                    <span>ย่อลิงก์ของคุณเรียบร้อยแล้ว!</span>
+                                </span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <div class="relative flex-1">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-brand-400">
+                                        <i class="fa-solid fa-bolt text-sm"></i>
+                                    </span>
+                                    <input type="text" id="result-short-url" readonly 
+                                        class="w-full pl-10 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-brand-400 font-mono text-sm font-bold focus:outline-none select-all">
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="copyResultLink()" class="flex-1 sm:flex-none px-5 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                                        <i class="fa-solid fa-copy"></i>
+                                        <span>คัดลอกลิงก์</span>
+                                    </button>
+                                    <button onclick="resetShortenForm()" class="flex-1 sm:flex-none px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs rounded-xl border border-slate-700 transition flex items-center justify-center space-x-1.5 active:scale-95">
+                                        <i class="fa-solid fa-plus"></i>
+                                        <span>สร้างลิงก์ใหม่</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 sm:p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-400">ลิงก์ทั้งหมด</span>
+                        <div class="p-2 bg-slate-700/50 rounded-xl text-brand-400"><i class="fa-solid fa-link text-sm"></i></div>
+                    </div>
+                    <span id="stat-total-links" class="text-2xl font-bold text-white">0</span>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 sm:p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-400">ยอดการเข้าชม</span>
+                        <div class="p-2 bg-slate-700/50 rounded-xl text-blue-400"><i class="fa-solid fa-eye text-sm"></i></div>
+                    </div>
+                    <span id="stat-total-views" class="text-2xl font-bold text-white">0</span>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 sm:p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-400">รายได้รวม</span>
+                        <div class="p-2 bg-slate-700/50 rounded-xl text-emerald-400"><i class="fa-solid fa-sack-dollar text-sm"></i></div>
+                    </div>
+                    <span id="stat-total-earnings" class="text-2xl font-bold text-emerald-400">$0.0000</span>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 sm:p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs text-slate-400">อัตรา CPM</span>
+                        <div class="p-2 bg-slate-700/50 rounded-xl text-amber-400"><i class="fa-solid fa-chart-line text-sm"></i></div>
+                    </div>
+                    <span id="stat-cpm-rate" class="text-2xl font-bold text-amber-400">$3.50 <span class="text-xs font-normal text-slate-400">/ 1K views</span></span>
+                </div>
+            </div>
+
+            <!-- Links Table Card -->
+            <div class="bg-slate-800/80 border border-slate-700/60 rounded-2xl overflow-hidden shadow-xl">
+                <div class="p-4 sm:p-5 border-b border-slate-700/60 flex items-center justify-between">
+                    <h3 class="font-bold text-slate-100 text-sm sm:text-base flex items-center space-x-2">
+                        <i class="fa-solid fa-list-ul text-brand-500"></i>
+                        <span>รายการลิงก์ย่อของคุณ</span>
+                    </h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-900/60 border-b border-slate-700/60 text-slate-400 text-xs font-medium uppercase tracking-wider">
+                                <th class="px-4 py-3">ลิงก์ย่อ / พรีวิว</th>
+                                <th class="px-4 py-3">URL ต้นทาง</th>
+                                <th class="px-4 py-3 text-center">ยอดคลิก</th>
+                                <th class="px-4 py-3 text-center">รายได้</th>
+                                <th class="px-4 py-3 text-right">การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="links-table-body" class="divide-y divide-slate-700/40">
+                            <!-- Rows rendered via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="p-12 text-center text-slate-500 space-y-3">
+                    <div class="w-16 h-16 bg-slate-700/30 rounded-full flex items-center justify-center mx-auto text-2xl text-slate-400">
+                        <i class="fa-solid fa-link-slash"></i>
+                    </div>
+                    <p class="text-sm font-medium">ยังไม่มีลิงก์ย่อในระบบ</p>
+                    <p class="text-xs text-slate-500">กรอก URL ในช่องด้านบนเพื่อสร้างลิงก์ย่อแรกของคุณ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: AD INTERSTITIAL PAGE (Adf.ly style) -->
+        <div id="view-ad" class="hidden space-y-6">
+            <!-- Link Not Found State Box (Shown if link invalid) -->
+            <div id="ad-error-box" class="hidden bg-slate-800 border border-slate-700 rounded-2xl p-8 text-center space-y-4 max-w-lg mx-auto my-12 shadow-2xl">
+                <div class="w-16 h-16 bg-red-500/20 text-red-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-link-slash"></i>
+                </div>
+                <h2 class="text-xl font-bold text-white">ไม่พบลิงก์ย่อนี้ในระบบ</h2>
+                <p class="text-slate-400 text-sm">ลิงก์ที่คุณกำลังพยายามเข้าถึงอาจถูกลบไปแล้ว หรือสะกดรหัสย่อไม่ถูกต้อง</p>
+                <button onclick="navigateTo('/')" class="px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold text-sm rounded-xl transition inline-flex items-center space-x-2">
+                    <i class="fa-solid fa-house"></i>
+                    <span>กลับสู่หน้าหลัก</span>
+                </button>
+            </div>
+
+            <!-- Ad Content Container -->
+            <div id="ad-content-container" class="space-y-6">
+                <!-- Ad Top Interstitial Header Bar -->
+                <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4 sticky top-20 z-30">
+                    <div class="flex items-center space-x-3 w-full md:w-auto">
+                        <div class="w-10 h-10 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-xl shrink-0">
+                            <i class="fa-solid fa-clock font-bold"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold">กำลังตรวจสอบโฆษณา</span>
+                            <p id="ad-target-display" class="text-sm font-mono text-slate-200 truncate max-w-xs sm:max-w-md">
+                                ปลายทาง: loading...
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Action / Countdown Box -->
+                    <div class="w-full md:w-auto flex justify-end">
+                        <!-- Countdown Box -->
+                        <div id="timer-box" class="flex items-center space-x-3 bg-slate-900 px-5 py-3 rounded-xl border border-slate-700">
+                            <i class="fa-solid fa-spinner fa-spin text-brand-500"></i>
+                            <span class="text-xs text-slate-300">กรุณารอ <span id="countdown-number" class="text-brand-400 font-bold text-lg font-mono">5</span> วินาที...</span>
+                        </div>
+
+                        <!-- Skip Ad Button -->
+                        <button id="skip-ad-btn" onclick="executeSkipAd()" class="hidden px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/20 glow-btn transition transform active:scale-95 flex items-center space-x-2">
+                            <span>ข้ามโฆษณา (Skip Ad)</span>
+                            <i class="fa-solid fa-forward"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Top Banner Ad Slot -->
+                <div id="admin-top-ad-slot" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 text-center min-h-[90px] flex items-center justify-center">
+                    <!-- Injected via JS -->
+                </div>
+
+                <!-- Ad Grid Content: Left OG Preview, Right Sidebar Ad -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Left: Target Link Preview Card -->
+                    <div class="lg:col-span-2 bg-slate-800/80 border border-slate-700 rounded-2xl p-6 space-y-4">
+                        <span class="text-xs font-semibold uppercase text-brand-400 tracking-wider">ตัวอย่างเว็บไซต์ปลายทาง (OpenGraph)</span>
+                        <div class="rounded-xl overflow-hidden border border-slate-700 bg-slate-900 shadow-inner">
+                            <img id="og-preview-img" src="https://placehold.co/600x400/1e293b/f8fafc?text=Destination" class="w-full h-56 sm:h-72 object-cover">
+                            <div class="p-5 space-y-2">
+                                <span id="og-preview-domain" class="text-xs text-brand-400 font-mono font-medium">domain.com</span>
+                                <h2 id="og-preview-title" class="text-lg font-bold text-white">หัวข้อเว็บไซต์ปลายทาง</h2>
+                                <p id="og-preview-desc" class="text-xs text-slate-400 line-clamp-2">คำอธิบายของลิงก์ปลายทางที่คุณกำลังจะเข้าถึง</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Side Ad Banner Slot -->
+                    <div id="admin-side-ad-slot" class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 text-center min-h-[300px] flex items-center justify-center">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Bottom Ad Banner Slot -->
+                <div id="admin-bottom-ad-slot" class="w-full bg-slate-800/60 border border-slate-700/80 rounded-2xl p-4 text-center min-h-[90px] flex items-center justify-center">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Settings Modal -->
+    <div id="admin-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl my-8 relative">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-amber-500/20 rounded-xl text-amber-400">
+                        <i class="fa-solid fa-sliders text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">ตั้งค่าโฆษณา & CPM (Admin)</h3>
+                        <p class="text-xs text-slate-400">จัดการอัตรา CPM เวลาถอยหลัง และสคริปต์โฆษณา</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white text-lg p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <!-- CPM and Timer Settings -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">อัตรา CPM ($ / 1,000 Views)</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm">$</span>
+                            <input type="number" id="admin-cpm-input" step="0.1" min="0.1" value="3.5" class="w-full pl-8 pr-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-amber-500 focus:outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">ระยะเวลานับถอยหลัง (วินาที)</label>
+                        <div class="relative">
+                            <input type="number" id="admin-timer-input" min="1" max="30" value="5" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-amber-500 focus:outline-none">
+                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 text-xs">วินาที</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ad Slots HTML Code Input -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-amber-400 mb-1">
+                            <i class="fa-solid fa-code mr-1"></i> โฆษณาป้ายบน (Top Ad Code / Banner)
+                        </label>
+                        <textarea id="admin-top-code" rows="2" placeholder="<div...> HTML / JS Ad Code </div>" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono text-slate-200 focus:border-amber-500 focus:outline-none resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-amber-400 mb-1">
+                            <i class="fa-solid fa-code mr-1"></i> โฆษณาป้ายข้าง (Side Ad Code / Square)
+                        </label>
+                        <textarea id="admin-side-code" rows="3" placeholder="<div...> HTML / JS Ad Code </div>" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono text-slate-200 focus:border-amber-500 focus:outline-none resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-amber-400 mb-1">
+                            <i class="fa-solid fa-code mr-1"></i> โฆษณาป้ายล่าง (Bottom Ad Code / Banner)
+                        </label>
+                        <textarea id="admin-bottom-code" rows="2" placeholder="<div...> HTML / JS Ad Code </div>" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-xs font-mono text-slate-200 focus:border-amber-500 focus:outline-none resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3 border-t border-slate-700/60 pt-4">
+                <button onclick="closeAdminModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-medium rounded-xl transition">ยกเลิก</button>
+                <button onclick="saveAdminSettings()" class="px-5 py-2 bg-gradient-to-r from-amber-500 to-brand-500 hover:from-amber-600 hover:to-brand-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-amber-500/20 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>บันทึกการตั้งค่า</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Login / Register Modal -->
+    <div id="auth-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-slate-800 border border-slate-700 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl relative my-8">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg z-10 p-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Auth Tabs Header -->
+            <div class="flex border-b border-slate-700 bg-slate-900/50">
+                <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-4 text-center text-sm font-bold border-b-2 border-brand-500 text-brand-400 transition">
+                    เข้าสู่ระบบ
+                </button>
+                <button id="tab-register-btn" onclick="switchAuthTab('register')" class="flex-1 py-4 text-center text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
+                    สมัครสมาชิก
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <!-- Error Alert -->
+                <div id="auth-error-alert" class="hidden p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-300 text-xs flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-exclamation shrink-0"></i>
+                    <span id="auth-error-msg">เกิดข้อผิดพลาด</span>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">อีเมล</label>
+                        <input type="email" id="login-email" required placeholder="your@email.com" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-brand-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">รหัสผ่าน</label>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-brand-500 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-brand-500/25 transition flex items-center justify-center space-x-2">
+                        <i id="login-spinner" class="fa-solid fa-right-to-bracket"></i>
+                        <span>เข้าสู่ระบบ</span>
+                    </button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" onsubmit="handleRegisterSubmit(event)" class="hidden space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">ชื่อผู้ใช้งาน / ชื่อที่แสดง</label>
+                        <input type="text" id="register-name" required placeholder="John Doe" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">อีเมล</label>
+                        <input type="email" id="register-email" required placeholder="your@email.com" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</label>
+                        <input type="password" id="register-password" required minlength="6" placeholder="••••••••" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white text-sm focus:border-emerald-500 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/25 transition flex items-center justify-center space-x-2">
+                        <i id="register-spinner" class="fa-solid fa-user-plus"></i>
+                        <span>สมัครสมาชิก</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Alert -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 border border-slate-700 text-white px-5 py-3 rounded-xl shadow-2xl transition duration-300 transform translate-y-20 opacity-0 flex items-center space-x-3 z-50 pointer-events-none">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">ข้อความแจ้งเตือน</span>
+    </div>
+
+    <!-- Firebase Standard Imports (Mandatory v11.6.1) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            signOut,
+            updateProfile,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            getDoc, 
+            setDoc, 
+            updateDoc, 
+            deleteDoc, 
+            onSnapshot, 
+            collection, 
+            query, 
+            where,
+            addDoc, 
+            getDocs 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables setup
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'sorawichtoday-adlink';
+        
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDKRhdzmivvu5xmzh2c7ybfh0s5sjlYYkw",
+            authDomain: "sorawichtoday-adlink.firebaseapp.com",
+            projectId: "sorawichtoday-adlink",
+            storageBucket: "sorawichtoday-adlink.firebasestorage.app",
+            messagingSenderId: "565539217075",
+            appId: "1:565539217075:web:80dca899d55cb8369fdac6",
+            measurementId: "G-MBPVL433GM"
+        };
+
+        // Initialize App & Services
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // App State
+        let currentUser = null;
+        let cpmRate = 0.0035; // default $3.50 per 1000 views ($0.0035/view)
+        let countdownDuration = 5;
+        let activeTimer = null;
+        let currentAdLink = null;
+        let linksList = [];
+        let adSettings = {
+            topCode: '<div class="p-3 bg-gradient-to-r from-amber-500/20 to-brand-500/20 rounded-xl border border-amber-500/30 text-amber-300 text-xs font-medium w-full text-center">🔥 [โฆษณาแนะนำ] CyberGear VR Headset ลดราคา 50% วันนี้เท่านั้น!</div>',
+            sideCode: '<div class="p-4 bg-slate-800 rounded-xl text-center space-y-2 w-full"><div class="w-12 h-12 bg-brand-500/20 text-brand-400 rounded-full flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-gamepad"></i></div><h4 class="font-bold text-white text-xs">Game App Pro</h4><p class="text-[11px] text-slate-400">ดาวน์โหลดฟรีบน iOS / Android</p></div>',
+            bottomCode: '<div class="p-2 text-xs text-slate-400 text-center w-full">Sponsored Ad Space • ติดต่อลงโฆษณา CPM</div>'
+        };
+
+        // Auth readiness resolver
+        let resolveAuthReady = null;
+        const authReadyPromise = new Promise((resolve) => {
+            resolveAuthReady = resolve;
+        });
+
+        // DOM Elements
+        const viewDashboard = document.getElementById('view-dashboard');
+        const viewAd = document.getElementById('view-ad');
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            handleInitialRouting();
+
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                }
+            } catch (err) {
+                console.warn("Auth token initialization fallback:", err);
+            }
+
+            subscribeToConfig();
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    updateUserAuthUI(user);
+                    subscribeToLinks();
+                } else {
+                    try {
+                        await signInAnonymously(auth);
+                    } catch (e) {
+                        console.warn("Anonymous auth fallback warning:", e);
+                    }
+                }
+                if (resolveAuthReady) {
+                    resolveAuthReady();
+                }
+            });
+
+            window.addEventListener('popstate', () => {
+                handleInitialRouting();
+            });
+        });
+
+        function updateUserAuthUI(user) {
+            const loggedOutDiv = document.getElementById('auth-logged-out');
+            const loggedInDiv = document.getElementById('auth-logged-in');
+            const displayNameSpan = document.getElementById('user-display-name');
+            const adminBtn = document.getElementById('nav-admin-btn');
+
+            if (user.isAnonymous) {
+                loggedOutDiv.classList.remove('hidden');
+                loggedInDiv.classList.add('hidden');
+                if (adminBtn) adminBtn.classList.add('hidden');
+            } else {
+                loggedOutDiv.classList.add('hidden');
+                loggedInDiv.classList.remove('hidden');
+                displayNameSpan.innerText = user.displayName || user.email.split('@')[0] || 'Member';
+                if (adminBtn) adminBtn.classList.remove('hidden');
+            }
+        }
+
+        window.openAuthModal = function(tab = 'login') {
+            document.getElementById('auth-modal').classList.remove('hidden');
+            document.getElementById('auth-error-alert').classList.add('hidden');
+            switchAuthTab(tab);
+        };
+
+        window.closeAuthModal = function() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        };
+
+        window.switchAuthTab = function(tab) {
+            const loginBtn = document.getElementById('tab-login-btn');
+            const registerBtn = document.getElementById('tab-register-btn');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            document.getElementById('auth-error-alert').classList.add('hidden');
+
+            if (tab === 'login') {
+                loginBtn.className = 'flex-1 py-4 text-center text-sm font-bold border-b-2 border-brand-500 text-brand-400 transition';
+                registerBtn.className = 'flex-1 py-4 text-center text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition';
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            } else {
+                registerBtn.className = 'flex-1 py-4 text-center text-sm font-bold border-b-2 border-emerald-500 text-emerald-400 transition';
+                loginBtn.className = 'flex-1 py-4 text-center text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition';
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        };
+
+        window.handleLoginSubmit = async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const spinner = document.getElementById('login-spinner');
+            const errorAlert = document.getElementById('auth-error-alert');
+            const errorMsg = document.getElementById('auth-error-msg');
+
+            spinner.className = 'fa-solid fa-spinner fa-spin';
+            errorAlert.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast('เข้าสู่ระบบสำเร็จ!', 'success');
+                closeAuthModal();
+            } catch (err) {
+                console.error("Login error:", err);
+                errorAlert.classList.remove('hidden');
+                if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+                    errorMsg.innerText = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+                } else if (err.code === 'auth/too-many-requests') {
+                    errorMsg.innerText = 'มีการพยายามเข้าสู่ระบบมากเกินไป กรุณาลองใหม่ในภายหลัง';
+                } else {
+                    errorMsg.innerText = err.message || 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+                }
+            } finally {
+                spinner.className = 'fa-solid fa-right-to-bracket';
+            }
+        };
+
+        window.handleRegisterSubmit = async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('register-name').value.trim();
+            const email = document.getElementById('register-email').value.trim();
+            const password = document.getElementById('register-password').value;
+            const spinner = document.getElementById('register-spinner');
+            const errorAlert = document.getElementById('auth-error-alert');
+            const errorMsg = document.getElementById('auth-error-msg');
+
+            spinner.className = 'fa-solid fa-spinner fa-spin';
+            errorAlert.classList.add('hidden');
+
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, password);
+                if (name && cred.user) {
+                    await updateProfile(cred.user, { displayName: name });
+                }
+                showToast('สมัครสมาชิกและเข้าสู่ระบบสำเร็จ!', 'success');
+                closeAuthModal();
+            } catch (err) {
+                console.error("Register error:", err);
+                errorAlert.classList.remove('hidden');
+                if (err.code === 'auth/email-already-in-use') {
+                    errorMsg.innerText = 'อีเมลนี้ถูกใช้งานแล้วในระบบ';
+                } else if (err.code === 'auth/weak-password') {
+                    errorMsg.innerText = 'รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร';
+                } else {
+                    errorMsg.innerText = err.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก';
+                }
+            } finally {
+                spinner.className = 'fa-solid fa-user-plus';
+            }
+        };
+
+        window.handleLogout = async function() {
+            try {
+                await signOut(auth);
+                showToast('ออกจากระบบเรียบร้อย', 'success');
+            } catch (err) {
+                console.error("Logout error:", err);
+            }
+        };
+
+        function subscribeToConfig() {
+            const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'adConfig');
+            
+            onSnapshot(configDocRef, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.cpmRate) cpmRate = parseFloat(data.cpmRate);
+                    if (data.countdownDuration) countdownDuration = parseInt(data.countdownDuration, 10);
+                    
+                    adSettings.topCode = data.topCode || '';
+                    adSettings.sideCode = data.sideCode || '';
+                    adSettings.bottomCode = data.bottomCode || '';
+
+                    document.getElementById('admin-cpm-input').value = cpmRate * 1000;
+                    document.getElementById('admin-timer-input').value = countdownDuration;
+                    document.getElementById('admin-top-code').value = adSettings.topCode;
+                    document.getElementById('admin-side-code').value = adSettings.sideCode;
+                    document.getElementById('admin-bottom-code').value = adSettings.bottomCode;
+
+                    document.getElementById('stat-cpm-rate').innerHTML = `$${(cpmRate * 1000).toFixed(2)} <span class="text-xs font-normal text-slate-400">/ 1K views</span>`;
+                    
+                    renderAdSlots();
+                } else {
+                    // Only create initial doc if authenticated non-anonymous user
+                    if (currentUser && !currentUser.isAnonymous) {
+                        setDoc(configDocRef, {
+                            cpmRate: 0.0035,
+                            countdownDuration: 5,
+                            topCode: '<div class="p-3 bg-gradient-to-r from-amber-500/20 to-brand-500/20 rounded-xl border border-amber-500/30 text-amber-300 text-xs font-medium">🔥 [โฆษณาแนะนำ] CyberGear VR Headset ลดราคา 50% วันนี้เท่านั้น!</div>',
+                            sideCode: '<div class="p-4 bg-slate-800 rounded-xl text-center space-y-2"><div class="w-12 h-12 bg-brand-500/20 text-brand-400 rounded-full flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-gamepad"></i></div><h4 class="font-bold text-white text-xs">Game App Pro</h4><p class="text-[11px] text-slate-400">ดาวน์โหลดฟรีบน iOS / Android</p></div>',
+                            bottomCode: '<div class="p-2 text-xs text-slate-400 text-center">Sponsored Ad Space • ติดต่อลงโฆษณา CPM</div>',
+                            updatedAt: new Date().toISOString()
+                        }).catch(e => console.warn("Config init notice:", e.message));
+                    }
+                }
+            }, (err) => {
+                console.warn("Config listener using fallback default settings:", err.message);
+                // Provide robust default fallback ad templates when permission is restricted
+                adSettings.topCode = adSettings.topCode || '<div class="p-3 bg-gradient-to-r from-amber-500/20 to-brand-500/20 rounded-xl border border-amber-500/30 text-amber-300 text-xs font-medium">🔥 [โฆษณาแนะนำ] CyberGear VR Headset ลดราคา 50% วันนี้เท่านั้น!</div>';
+                adSettings.sideCode = adSettings.sideCode || '<div class="p-4 bg-slate-800 rounded-xl text-center space-y-2"><div class="w-12 h-12 bg-brand-500/20 text-brand-400 rounded-full flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-gamepad"></i></div><h4 class="font-bold text-white text-xs">Game App Pro</h4><p class="text-[11px] text-slate-400">ดาวน์โหลดฟรีบน iOS / Android</p></div>';
+                adSettings.bottomCode = adSettings.bottomCode || '<div class="p-2 text-xs text-slate-400 text-center">Sponsored Ad Space • ติดต่อลงโฆษณา CPM</div>';
+                renderAdSlots();
+            });
+        }
+
+        function subscribeToLinks() {
+            if (!currentUser) return;
+            const linksColRef = collection(db, 'artifacts', appId, 'public', 'data', 'links');
+            
+            onSnapshot(linksColRef, (snap) => {
+                linksList = [];
+                snap.forEach(docSnap => {
+                    linksList.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                linksList.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+                renderLinksTable();
+                updateAggregateStats();
+            }, (err) => {
+                console.warn("Links listener warning:", err.message);
+            });
+        }
+
+        function getPathCode() {
+            let path = window.location.pathname.replace(/^\//, '').trim();
+            if (path === 'index.html' || path === 'favicon.ico') return null;
+            if (path.endsWith('/')) path = path.slice(0, -1);
+            if (path) return path;
+
+            const hash = window.location.hash.replace(/^#/, '').trim();
+            if (hash && hash !== '/') return hash;
+            return null;
+        }
+
+        function handleInitialRouting() {
+            checkAndRenderRoute();
+        }
+
+        async function checkAndRenderRoute() {
+            const code = getPathCode();
+            if (code && code !== '/') {
+                showAdLoadingState(code);
+
+                // Wait for Firebase Auth initialization to complete
+                await authReadyPromise;
+
+                let foundLink = linksList.find(l => l.code === code || l.id === code);
+                
+                if (!foundLink) {
+                    try {
+                        const linksColRef = collection(db, 'artifacts', appId, 'public', 'data', 'links');
+                        const q = query(linksColRef, where("code", "==", code));
+                        const querySnap = await getDocs(q);
+                        if (!querySnap.empty) {
+                            const docSnap = querySnap.docs[0];
+                            foundLink = { id: docSnap.id, ...docSnap.data() };
+                        } else {
+                            // Secondary lookup by Firestore document ID
+                            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'links', code);
+                            const docSnap = await getDoc(docRef);
+                            if (docSnap.exists()) {
+                                foundLink = { id: docSnap.id, ...docSnap.data() };
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Error fetching direct link:", err);
+                    }
+                }
+
+                if (foundLink) {
+                    showAdInterstitialPage(foundLink);
+                } else {
+                    showLinkNotFoundState(code);
+                }
+            } else {
+                showDashboardView();
+            }
+        }
+
+        function showAdLoadingState(code) {
+            const header = document.getElementById('main-header');
+            if (header) header.classList.add('hidden');
+
+            viewDashboard.classList.add('hidden');
+            viewAd.classList.remove('hidden');
+
+            document.getElementById('ad-error-box').classList.add('hidden');
+            document.getElementById('ad-content-container').classList.remove('hidden');
+
+            document.getElementById('ad-target-display').innerText = `กำลังตรวจสอบรหัสลิงก์: ${code}...`;
+            document.getElementById('og-preview-title').innerText = 'กำลังโหลดข้อมูลเว็บไซต์ปลายทาง...';
+            document.getElementById('og-preview-desc').innerText = 'กรุณารอครู่หนึ่ง ระบบกำลังตรวจสอบความปลอดภัยของลิงก์';
+            document.getElementById('og-preview-domain').innerText = 'loading...';
+        }
+
+        function showLinkNotFoundState(code) {
+            const header = document.getElementById('main-header');
+            if (header) header.classList.add('hidden');
+
+            viewDashboard.classList.add('hidden');
+            viewAd.classList.remove('hidden');
+
+            document.getElementById('ad-content-container').classList.add('hidden');
+            document.getElementById('ad-error-box').classList.remove('hidden');
+        }
+
+        window.navigateTo = function(path) {
+            if (path === '/') {
+                window.history.pushState({}, '', window.location.pathname.split('?')[0]);
+                window.location.hash = '';
+                showDashboardView();
+            } else {
+                window.history.pushState({}, '', path);
+                checkAndRenderRoute();
+            }
+        };
+
+        function showDashboardView() {
+            const header = document.getElementById('main-header');
+            if (header) header.classList.remove('hidden');
+
+            viewDashboard.classList.remove('hidden');
+            viewAd.classList.add('hidden');
+            if (activeTimer) clearInterval(activeTimer);
+        }
+
+        async function fetchOpenGraphData(targetUrl) {
+            try {
+                const proxyUrl = `https://api.microlink.io?url=${encodeURIComponent(targetUrl)}`;
+                const res = await fetch(proxyUrl);
+                const contentType = res.headers.get("content-type") || "";
+
+                // ตรวจสอบว่าคำขอสำเร็จและส่งกลับมาเป็น JSON จริง ไม่ใช่ HTML Error Page
+                if (res.ok && contentType.includes("application/json")) {
+                    const text = await res.text();
+                    try {
+                        const json = JSON.parse(text);
+                        if (json.status === 'success' && json.data) {
+                            const data = json.data;
+                            return {
+                                ogTitle: data.title || getDomainFromUrl(targetUrl),
+                                ogDesc: data.description || 'คลิกที่นี่เพื่อไปตามลิงก์ย่อที่คุณร้องขอ',
+                                ogImage: data.image?.url || `https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800`,
+                                ogDomain: data.publisher || getDomainFromUrl(targetUrl)
+                            };
+                        }
+                    } catch (jsonErr) {
+                        console.warn("JSON parsing failed, falling back:", jsonErr);
+                    }
+                }
+            } catch (err) {
+                console.warn("Microlink OG fetch warning:", err);
+            }
+
+            // Fallback เมื่อ API ขัดข้องหรือคืนค่าเป็น HTML
+            const domain = getDomainFromUrl(targetUrl);
+            return {
+                ogTitle: `${domain} - ลิงก์ปลายทางที่คุณต้องการเปิด`,
+                ogDesc: `เว็บไซต์ปลายทาง: ${targetUrl} (ผ่านระบบตรวจสอบความปลอดภัย AdLink)`,
+                ogImage: `https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800`,
+                ogDomain: domain
+            };
+        }
+
+        function getDomainFromUrl(urlStr) {
+            try {
+                const url = new URL(urlStr);
+                return url.hostname;
+            } catch (e) {
+                return urlStr;
+            }
+        }
+
+        window.handleShortenSubmit = async function(e) {
+            e.preventDefault();
+            
+            const urlInput = document.getElementById('target-url');
+            const customSlugInput = document.getElementById('custom-slug');
+            const btnText = document.getElementById('btn-shorten-text');
+            const btnIcon = document.getElementById('btn-shorten-icon');
+
+            const targetUrl = urlInput.value.trim();
+            if (!targetUrl) return;
+
+            let code = customSlugInput.value.trim().replace(/[^a-zA-Z0-9_-]/g, '');
+            if (!code) {
+                code = generateRandomCode(6);
+            }
+
+            const exists = linksList.some(l => l.code === code);
+            if (exists) {
+                showToast(`รหัสย่อ "${code}" มีในระบบแล้ว กรุณาใช้ชื่ออื่น`, 'error');
+                return;
+            }
+
+            btnText.innerText = 'กำลังสแกน OG...';
+            btnIcon.className = 'fa-solid fa-spinner fa-spin';
+
+            const ogInfo = await fetchOpenGraphData(targetUrl);
+
+            // ป้องกัน undefined ไม่ให้ส่งลง Firestore
+            const newLinkDoc = {
+                code: code,
+                originalUrl: targetUrl,
+                clicks: 0,
+                earnings: 0,
+                createdBy: currentUser ? currentUser.uid : 'anonymous',
+                createdAt: new Date().toISOString(),
+                ogTitle: String(ogInfo.ogTitle || 'AdLink Pro'),
+                ogDesc: String(ogInfo.ogDesc || 'คลิกลิงก์เพื่อดูข้อมูลเพิ่มเติม'),
+                ogImage: String(ogInfo.ogImage || 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800'),
+                ogDomain: String(ogInfo.ogDomain || getDomainFromUrl(targetUrl))
+            };
+
+            try {
+                const linksColRef = collection(db, 'artifacts', appId, 'public', 'data', 'links');
+                await addDoc(linksColRef, newLinkDoc);
+
+                // Show result box with short link
+                const fullShortUrl = `${window.location.origin}/${code}`;
+                document.getElementById('result-short-url').value = fullShortUrl;
+                document.getElementById('shorten-form-container').classList.add('hidden');
+                document.getElementById('shorten-result-box').classList.remove('hidden');
+
+                showToast('ย่อลิงก์สำเร็จเรียบร้อย!', 'success');
+
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 } });
+                }
+            } catch (err) {
+                console.error("Error creating link in Firestore:", err);
+                showToast(`เกิดข้อผิดพลาด: ${err.message || 'สิทธิ์การบันทึกข้อมูลถูกปฏิเสธ'}`, 'error');
+            } finally {
+                btnText.innerText = 'ย่อลิงก์เลย';
+                btnIcon.className = 'fa-solid fa-scissors';
+            }
+        };
+
+        window.copyResultLink = function() {
+            const resultInput = document.getElementById('result-short-url');
+            if (resultInput && resultInput.value) {
+                copyToClipboard(resultInput.value);
+            }
+        };
+
+        window.resetShortenForm = function() {
+            document.getElementById('target-url').value = '';
+            document.getElementById('custom-slug').value = '';
+            document.getElementById('shorten-result-box').classList.add('hidden');
+            document.getElementById('shorten-form-container').classList.remove('hidden');
+        };
+
+        function generateRandomCode(length = 6) {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let res = '';
+            for (let i = 0; i < length; i++) {
+                res += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return res;
+        }
+
+        function renderLinksTable() {
+            const tbody = document.getElementById('links-table-body');
+            const emptyState = document.getElementById('empty-state');
+
+            if (!linksList || linksList.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            const origin = window.location.origin;
+
+            tbody.innerHTML = linksList.map(item => {
+                const fullShortUrl = `${origin}/${item.code}`;
+                return `
+                <tr class="hover:bg-slate-700/30 transition border-b border-slate-700/40">
+                    <td class="px-4 py-3.5">
+                        <div class="flex items-center space-x-3">
+                            <img src="${item.ogImage || 'https://placehold.co/100x100'}" onerror="this.src='https://placehold.co/100x100'" class="w-10 h-10 rounded-lg object-cover border border-slate-700 shrink-0">
+                            <div>
+                                <a href="/${item.code}" onclick="event.preventDefault(); window.navigateTo('/${item.code}');" class="font-semibold text-brand-400 font-mono hover:underline text-sm flex items-center gap-1">
+                                    <span>${item.code}</span>
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </a>
+                                <p class="text-xs text-slate-300 font-medium line-clamp-1 max-w-xs">${item.ogTitle || 'ไม่มีชื่อเรื่อง'}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3.5 max-w-xs truncate text-xs text-slate-400 font-mono" title="${item.originalUrl}">
+                        ${item.originalUrl}
+                    </td>
+                    <td class="px-4 py-3.5 text-center font-bold text-white text-sm">
+                        ${item.clicks || 0}
+                    </td>
+                    <td class="px-4 py-3.5 text-center font-semibold text-emerald-400 text-sm">
+                        $${(item.earnings || 0).toFixed(4)}
+                    </td>
+                    <td class="px-4 py-3.5 text-right space-x-1.5">
+                        <button onclick="copyToClipboard('${fullShortUrl}')" 
+                            class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded-lg transition" title="คัดลอกลิงก์">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                        <button onclick="window.navigateTo('/${item.code}')" 
+                            class="px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white font-medium text-xs rounded-lg shadow-md shadow-brand-500/20 transition inline-flex items-center space-x-1">
+                            <i class="fa-solid fa-play text-[10px]"></i>
+                            <span>ทดสอบเปิด</span>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function updateAggregateStats() {
+            const totalLinks = linksList.length;
+            const totalViews = linksList.reduce((sum, item) => sum + (item.clicks || 0), 0);
+            const totalEarnings = linksList.reduce((sum, item) => sum + (item.earnings || 0), 0);
+
+            document.getElementById('stat-total-links').innerText = totalLinks;
+            document.getElementById('stat-total-views').innerText = totalViews;
+            document.getElementById('stat-total-earnings').innerText = `$${totalEarnings.toFixed(4)}`;
+            document.getElementById('user-balance-nav').innerText = `$${totalEarnings.toFixed(4)}`;
+        }
+
+        function showAdInterstitialPage(linkObj) {
+            currentAdLink = linkObj;
+
+            const header = document.getElementById('main-header');
+            if (header) header.classList.add('hidden');
+
+            viewDashboard.classList.add('hidden');
+            viewAd.classList.remove('hidden');
+
+            document.getElementById('og-title').setAttribute('content', linkObj.ogTitle || 'AdLink Pro');
+            document.getElementById('og-desc').setAttribute('content', linkObj.ogDesc || 'คลิกลิงก์ย่อเพื่อดูข้อมูล');
+            if (linkObj.ogImage) {
+                document.getElementById('og-image').setAttribute('content', linkObj.ogImage);
+            }
+
+            document.getElementById('ad-target-display').innerText = `ปลายทาง: ${linkObj.originalUrl}`;
+            document.getElementById('og-preview-domain').innerText = linkObj.ogDomain || getDomainFromUrl(linkObj.originalUrl);
+            document.getElementById('og-preview-title').innerText = linkObj.ogTitle || 'ลิงก์ปลายทาง';
+            document.getElementById('og-preview-desc').innerText = linkObj.ogDesc || linkObj.originalUrl;
+            document.getElementById('og-preview-img').src = linkObj.ogImage || 'https://placehold.co/600x400/1e293b/f8fafc?text=Destination';
+
+            renderAdSlots();
+            startAdCountdown();
+        }
+
+        // Safe Script Injector to ensure embedded JS ad tags (e.g., AdSense, Adsterra, PopAds) execute properly
+        function setAdSlotContent(elementId, htmlContent, fallbackHtml) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+
+            const finalHtml = (htmlContent && htmlContent.trim() !== '') ? htmlContent : fallbackHtml;
+            container.innerHTML = '';
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = finalHtml;
+
+            Array.from(tempDiv.childNodes).forEach(node => {
+                if (node.nodeName === 'SCRIPT') {
+                    const newScript = document.createElement('script');
+                    Array.from(node.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.text = node.innerHTML;
+                    container.appendChild(newScript);
+                } else {
+                    container.appendChild(node.cloneNode(true));
+                }
+            });
+        }
+
+        function renderAdSlots() {
+            const defaultTop = '<div class="p-3 bg-gradient-to-r from-amber-500/20 to-brand-500/20 rounded-xl border border-amber-500/30 text-amber-300 text-xs font-medium w-full text-center">🔥 [โฆษณาแนะนำ] CyberGear VR Headset ลดราคา 50% วันนี้เท่านั้น!</div>';
+            const defaultSide = '<div class="p-4 bg-slate-800 rounded-xl text-center space-y-2 w-full"><div class="w-12 h-12 bg-brand-500/20 text-brand-400 rounded-full flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-gamepad"></i></div><h4 class="font-bold text-white text-xs">Game App Pro</h4><p class="text-[11px] text-slate-400">ดาวน์โหลดฟรีบน iOS / Android</p></div>';
+            const defaultBottom = '<div class="p-2 text-xs text-slate-400 text-center w-full">Sponsored Ad Space • ติดต่อลงโฆษณา CPM</div>';
+
+            setAdSlotContent('admin-top-ad-slot', adSettings.topCode, defaultTop);
+            setAdSlotContent('admin-side-ad-slot', adSettings.sideCode, defaultSide);
+            setAdSlotContent('admin-bottom-ad-slot', adSettings.bottomCode, defaultBottom);
+        }
+
+        function startAdCountdown() {
+            let left = countdownDuration || 5;
+            const timerBox = document.getElementById('timer-box');
+            const countdownNum = document.getElementById('countdown-number');
+            const skipBtn = document.getElementById('skip-ad-btn');
+
+            timerBox.classList.remove('hidden');
+            skipBtn.classList.add('hidden');
+            skipBtn.disabled = true;
+            countdownNum.innerText = left;
+
+            if (activeTimer) clearInterval(activeTimer);
+
+            activeTimer = setInterval(() => {
+                left--;
+                countdownNum.innerText = left;
+
+                if (left <= 0) {
+                    clearInterval(activeTimer);
+                    timerBox.classList.add('hidden');
+                    skipBtn.classList.remove('hidden');
+                    skipBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        window.executeSkipAd = async function() {
+            if (!currentAdLink) return;
+
+            const linkDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'links', currentAdLink.id);
+            const newClicks = (currentAdLink.clicks || 0) + 1;
+            const newEarnings = (currentAdLink.earnings || 0) + cpmRate;
+
+            try {
+                await updateDoc(linkDocRef, {
+                    clicks: newClicks,
+                    earnings: newEarnings,
+                    lastVisitedAt: new Date().toISOString()
+                });
+            } catch (err) {
+                console.error("Error updating views:", err);
+            }
+
+            showToast("กำลังนำท่านไปยังเว็บไซต์ปลายทาง...", "success");
+
+            setTimeout(() => {
+                window.open(currentAdLink.originalUrl, '_self');
+            }, 500);
+        };
+
+        window.openAdminModal = function() {
+            if (!currentUser || currentUser.isAnonymous) {
+                showToast("กรุณาเข้าสู่ระบบก่อนใช้งานส่วนจัดการโฆษณา", "error");
+                return;
+            }
+            document.getElementById('admin-modal').classList.remove('hidden');
+        };
+
+        window.closeAdminModal = function() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        };
+
+        window.saveAdminSettings = async function() {
+            if (!currentUser) return;
+
+            const cpmVal = parseFloat(document.getElementById('admin-cpm-input').value) || 3.50;
+            const timerVal = parseInt(document.getElementById('admin-timer-input').value, 10) || 5;
+            
+            const topC = document.getElementById('admin-top-code').value;
+            const sideC = document.getElementById('admin-side-code').value;
+            const bottomC = document.getElementById('admin-bottom-code').value;
+
+            const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'adConfig');
+
+            try {
+                await setDoc(configDocRef, {
+                    cpmRate: cpmVal / 1000,
+                    countdownDuration: timerVal,
+                    topCode: topC,
+                    sideCode: sideC,
+                    bottomCode: bottomC,
+                    updatedAt: new Date().toISOString(),
+                    updatedBy: currentUser.uid
+                }, { merge: true });
+
+                showToast("บันทึกการตั้งค่าโฆษณาลง Firebase เรียบร้อย!", "success");
+                closeAdminModal();
+            } catch (err) {
+                console.error("Save admin settings error:", err);
+                showToast("ไม่สามารถบันทึกการตั้งค่าได้", "error");
+            }
+        };
+
+        window.copyToClipboard = function(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            showToast('คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว!', 'success');
+        };
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = msg;
+            if (type === 'error') {
+                toastIcon.className = 'fa-solid fa-circle-xmark text-red-400 text-lg';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-lg';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
