@@ -431,7 +431,7 @@
                 <button id="tab-login-btn" onclick="switchAuthTab('login')" class="flex-1 py-4 text-center text-sm font-bold border-b-2 border-brand-500 text-brand-400 transition">
                     เข้าสู่ระบบ
                 </button>
-              <!--  <button id="tab-register-btn" onclick="switchAuthTab('register')" class="flex-1 py-4 text-center text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
+             <!--   <button id="tab-register-btn" onclick="switchAuthTab('register')" class="flex-1 py-4 text-center text-sm font-bold border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition">
                     สมัครสมาชิก
                 </button>-->
             </div>
@@ -1158,27 +1158,34 @@
         }
 
         window.executeSkipAd = async function() {
-            if (!currentAdLink) return;
+            if (!currentAdLink || !currentAdLink.originalUrl) {
+                showToast("ไม่พบ URL ปลายทาง", "error");
+                return;
+            }
 
-            const linkDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'links', currentAdLink.id);
-            const newClicks = (currentAdLink.clicks || 0) + 1;
-            const newEarnings = (currentAdLink.earnings || 0) + cpmRate;
+            const targetUrl = currentAdLink.originalUrl;
 
-            try {
-                await updateDoc(linkDocRef, {
-                    clicks: newClicks,
-                    earnings: newEarnings,
-                    lastVisitedAt: new Date().toISOString()
-                });
-            } catch (err) {
-                console.error("Error updating views:", err);
+            if (currentAdLink.id) {
+                try {
+                    const linkDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'links', currentAdLink.id);
+                    const newClicks = (currentAdLink.clicks || 0) + 1;
+                    const newEarnings = (currentAdLink.earnings || 0) + (cpmRate || 0.0035);
+
+                    updateDoc(linkDocRef, {
+                        clicks: newClicks,
+                        earnings: newEarnings,
+                        lastVisitedAt: new Date().toISOString()
+                    }).catch(err => console.warn("Background view update skipped:", err.message));
+                } catch (err) {
+                    console.warn("Skip ad statistics error:", err);
+                }
             }
 
             showToast("กำลังนำท่านไปยังเว็บไซต์ปลายทาง...", "success");
 
             setTimeout(() => {
-                window.open(currentAdLink.originalUrl, '_self');
-            }, 500);
+                window.location.href = targetUrl;
+            }, 300);
         };
 
         window.openAdminModal = function() {
