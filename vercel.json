@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/:code([a-zA-Z0-9_-]+)",
-      "destination": "/api/shortlink?code=:code"
+      "source": "/api/shortlink",
+      "destination": "/api/shortlink"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/:code",
+      "destination": "/api/shortlink?code=:code"
     }
   ]
 }
